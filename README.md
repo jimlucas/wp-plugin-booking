@@ -1,32 +1,23 @@
-# WP Plugin Booking
+# WooCommerce Equipment Booking 0.2.0
 
-GPL-2.0-or-later WordPress/WooCommerce equipment and service scheduling plugin.
+Development build. Single physical machine per WooCommerce simple product.
 
-## Status: 0.1.0 — development preview, not production-ready
+## Added in 0.2.0
+- Equipment Bookings > Reservations: active reservation/hold overview, links to orders and products.
+- Equipment Bookings > Machines & Closures: machine listing, full-day closure dates per product.
+- Customer product page: AJAX hourly availability feedback, disabled unavailable start times and invalid consecutive durations.
+- Reservation validation respects configured closure dates.
 
-This initial release provides a real WooCommerce product configuration interface, a WordPress admin overview, and a public booking-form **preview** with variable-length time selections. **It does not create reservations, check availability against existing orders, lock slots, or process booking checkout.** Do not use it for paid bookings yet.
+## Known limitations
+- Development/testing only; do not use for real customer payments yet.
+- No interactive month-grid calendar yet; date picker is browser-native.
+- Admin reservations are read-only; cancel via WooCommerce order.
+- Does not implement Checkout Blocks (classic checkout required).
+- Hourly boundaries only; opening/closing hours same day; no per-weekday different hours.
+- AJAX availability is advisory; server-side revalidation and unique slot constraint are authoritative.
+- 0.1.0 reservation handling needs production hardening, particularly checkout holds, cart race conditions, and DST transitions.
+- No integration test was run against WordPress/WooCommerce/WPOS.
+- Week start follows WordPress Settings > General, but the browser-native date input uses OS/browser presentation.
 
-## Install
-
-1. Install and activate WooCommerce.
-2. Copy this repository into `wp-content/plugins/wp-plugin-booking/` or ZIP the directory and upload through Plugins → Add New → Upload Plugin.
-3. Activate **WP Plugin Booking**.
-4. Edit a WooCommerce product. In Product data → General, enable equipment booking, enter hourly rate, opening/closing hours, increment, and open weekdays.
-5. Save the product.
-6. Create a test page with `[wpb_booking id="123"]`, replacing 123 with the product ID.
-7. Visit **Equipment Booking** in the WordPress admin to see configured products.
-
-The plugin creates **no WordPress pages or navigation entries** on activation. Week-start follows WordPress Settings → General. Dates follow the site timezone.
-
-## Planned milestones
-
-- 0.2.0: resource registry, weekly schedules and exceptions, persistent reservations, conflict-safe time-slot locking
-- 0.3.0: WooCommerce cart/order integration, temporary holds, lifecycle synchronization, HPOS and Checkout Blocks
-- 0.4.0: administrative calendar, maintenance blocks, staff assignment and commissioned services
-- 1.0.0: security, concurrency, payment, DST, cancellation and POS integration tests
-
-## Security and development notes
-
-This preview intentionally disables checkout because an unprotected booking workflow could sell overlapping machine time. Test on staging only. Use WooCommerce CRUD APIs for orders, transactional InnoDB tables for occupancy, and server-side validation for every future booking request.
-
-License: GPL-2.0-or-later.
+## Docker deployment
+Prefer updating only the plugin files in the bind-mounted or named-volume wp-content/plugins directory. Never replace wp-config.php, database, uploads, themes, or unrelated plugins. See response for commands.
