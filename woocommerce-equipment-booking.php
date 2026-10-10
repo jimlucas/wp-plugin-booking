@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WooCommerce Equipment Booking
  * Description: Hourly, single-machine-per-product reservations integrated with WooCommerce orders.
- * Version: 0.2.0
+ * Version: 0.2.1
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
  * License: GPL-2.0-or-later
@@ -10,7 +10,7 @@
  */
 if (!defined('ABSPATH')) exit;
 final class WEB_Equipment_Booking {
- const VERSION='0.2.0';
+ const VERSION='0.2.1';
  const META='_web_bookable';
  const TABLE='web_reserved_slots';
  static function table(){global $wpdb; return $wpdb->prefix.self::TABLE;}
@@ -65,7 +65,7 @@ final class WEB_Equipment_Booking {
   woocommerce_wp_text_input(['id'=>'_web_open','label'=>'Opening time (HH:MM)','placeholder'=>'10:00','description'=>'24-hour time, whole hours only.','desc_tip'=>true]);
   woocommerce_wp_text_input(['id'=>'_web_close','label'=>'Closing time (HH:MM)','placeholder'=>'18:00','description'=>'24-hour time, whole hours only.','desc_tip'=>true]);
   woocommerce_wp_text_input(['id'=>'_web_max','label'=>'Maximum booking hours','type'=>'number','custom_attributes'=>['min'=>'1','max'=>'24']]);
-  $days=get_post_meta(get_the_ID(),'_web_days',true);$days=is_array($days)?$days:[1,2,3,4,5];echo '<p class="form-field"><label>Available weekdays</label><span style="display:inline-block">';foreach(['Sun','Mon','Tue','Wed','Thu','Fri','Sat'] as $n=>$name)printf('<label style="margin-right:9px"><input type="checkbox" name="_web_days[]" value="%d" %s/> %s</label>',$n,checked(in_array($n,$days),true,false),esc_html($name));echo '</span></p></div>';
+  $days=get_post_meta(get_the_ID(),'_web_days',true);$days=is_array($days)?$days:[1,2,3,4,5];echo '<p class="form-field"><label>Available weekdays</label><span style="display:inline-flex;flex-wrap:wrap;align-items:center;gap:10px;max-width:calc(100% - 170px)">';foreach(['Sun','Mon','Tue','Wed','Thu','Fri','Sat'] as $n=>$name)printf('<label style="float:none;width:auto;margin:0;display:inline-flex;align-items:center;gap:4px;white-space:nowrap"><input style="float:none;margin:0" type="checkbox" name="_web_days[]" value="%d" %s/> %s</label>',$n,checked(in_array($n,$days),true,false),esc_html($name));echo '</span></p></div>';
  }
  static function save_fields($p){$id=$p->get_id();$p->update_meta_data(self::META,isset($_POST[self::META])?'yes':'no');
   foreach(['_web_open','_web_close'] as $k){$v=isset($_POST[$k])?sanitize_text_field(wp_unslash($_POST[$k])):'';if(preg_match('/^(?:[01][0-9]|2[0-3]):00$/',$v))$p->update_meta_data($k,$v);}
