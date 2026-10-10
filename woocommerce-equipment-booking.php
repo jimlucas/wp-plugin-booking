@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WooCommerce Equipment Booking
  * Description: Hourly, single-machine-per-product reservations integrated with WooCommerce orders.
- * Version: 0.2.1
+ * Version: 0.2.2
  * Requires Plugins: woocommerce
  * Requires PHP: 7.4
  * License: GPL-2.0-or-later
@@ -10,7 +10,7 @@
  */
 if (!defined('ABSPATH')) exit;
 final class WEB_Equipment_Booking {
- const VERSION='0.2.1';
+ const VERSION='0.2.2';
  const META='_web_bookable';
  const TABLE='web_reserved_slots';
  static function table(){global $wpdb; return $wpdb->prefix.self::TABLE;}
@@ -73,7 +73,7 @@ final class WEB_Equipment_Booking {
  }
  static function form(){global $product;if(!$product||!$product->is_type('simple')||!self::active($product->get_id()))return;$s=self::settings($product->get_id());$now=new DateTimeImmutable('now',wp_timezone());$tomorrow=$now->modify('+1 day')->format('Y-m-d');
   echo '<div class="web-booking" data-close="'.esc_attr((int)substr($s['close'],0,2)).'" data-product="'.esc_attr($product->get_id()).'">';echo '<p><label for="web_date">Reservation date</label><br/><input required type="date" id="web_date" name="web_date" min="'.esc_attr($now->format('Y-m-d')).'" value="'.esc_attr($tomorrow).'"/></p>';
-  echo '<p><label for="web_start">Starting time</label><br/><select required id="web_start" name="web_start">';$o=(int)substr($s['open'],0,2);$c=(int)substr($s['close'],0,2);for($h=$o;$h<$c;$h++)printf('<option value="%02d:00">%s</option>',$h,esc_html(wp_date('g:i A',strtotime(sprintf('2020-01-01 %02d:00:00',$h)))));echo '</select></p>';
+  echo '<p><label for="web_start">Starting time</label><br/><select required id="web_start" name="web_start">';$o=(int)substr($s['open'],0,2);$c=(int)substr($s['close'],0,2);for($h=$o;$h<$c;$h++)printf('<option value="%02d:00">%s</option>',$h,esc_html(sprintf('%d:00 %s',($h%12)?:12,$h<12?'AM':'PM')));echo '</select></p>';
   echo '<p><label for="web_hours">Consecutive hours</label><br/><select required id="web_hours" name="web_hours">';for($i=1;$i<=$s['max'];$i++)printf('<option value="%d">%d hour%s</option>',$i,$i,$i===1?'':'s');echo '</select></p><div id="web-availability" role="status" aria-live="polite">Checking availability…</div><p class="web-hint">Availability is checked when added to cart and again at checkout. Bookings are confirmed only when checkout succeeds.</p></div>';
  }
  static function parse($id,$date,$start,$hours){$s=self::settings($id);if(!preg_match('/^\d{4}-\d{2}-\d{2}$/',$date)||!preg_match('/^(?:[01]\d|2[0-3]):00$/',$start)||$hours<1||$hours>$s['max'])return new WP_Error('invalid','Invalid booking date, time, or duration.');
